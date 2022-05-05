@@ -20,8 +20,16 @@ module.exports = {
 
   users: {
     // Ditto as above
-    get: function (req, res) {},
-    post: function (req, res) {}
+    get: function (req, res) {
+      models.users.get((data) => {
+        res.send(JSON.stringify(data));
+      });
+    },
+    post: function (req, res) {
+      models.users.post(req.body, (data) => {
+        res.send(JSON.stringify(data));
+      });
+    }
   }
 };
 

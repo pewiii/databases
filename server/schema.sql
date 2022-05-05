@@ -2,14 +2,24 @@ CREATE DATABASE chat;
 
 USE chat;
 
-CREATE TABLE messages (
-  /* Describe your table here.*/
+CREATE TABLE users (
   id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  roomname text(50),
-  text text,
-  username text(50)
+  username varchar(50)
 );
 
+CREATE TABLE rooms (
+  id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  roomname varchar(50)
+);
+
+CREATE TABLE messages (
+  id int NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  room  int,
+  text varchar(255),
+  user int,
+  FOREIGN KEY (room) REFERENCES rooms(id),
+  FOREIGN KEY (user) REFERENCES users(id)
+);
 /* Create other tables and define schemas for them here! */
 
 

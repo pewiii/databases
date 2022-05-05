@@ -3,7 +3,7 @@ var db = require('../db');
 module.exports = {
   messages: {
     get: function (callback) {
-      db.query('SELECT * FROM messages', (err, result) => {
+      db.query('SELECT * FROM messages JOIN users ON messages.user=users.username JOIN rooms ON messages.room=rooms.roomname', (err, result) => {
         if (err) {
           console.error(err);
         } else {
@@ -13,7 +13,14 @@ module.exports = {
 
     }, // a function which produces all the messages
     post: function (msg, callback) {
-      db.query(`INSERT INTO messages VALUES (NULL, "${msg.roomname}", "${msg.text}", "${msg.username}" )`, (err, result) => {
+      var message = msg.text;
+      var roomname = msg.roomname;
+      var username = msg.username;
+      var sql1 = `INSERT INTO rooms VALUES (NULL, "${roomname}"); `;
+      var sql2 = `INSERT INTO users VALUES (NULL, "${username}"); `;
+      var sql3 = `INSERT INTO messages VALUES (NULL, "${message}");`;
+
+      db.query('BEGIN;' + sql1 + sql2 + sql3 + 'COMMIT;', (err, result) => {
         if (err) {
           console.error(err);
         } else {
@@ -26,17 +33,17 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function () {
+    get: function (callback) {
       db.query('SELECT * FROM users', (err, result) => {
-        console.log(result);
+        callback(result);
       });
     },
-    post: function (usrs) {
-      db.query(`INSERT INTO users VALUES ( ${usrs.username}`, (err, result) => {
+    post: function (usrs, callback) {
+      db.query(`INSERT INTO users VALUES (NULL, "${usrs.username}")`, (err, result) => {
         if (err) {
-          console.log('insert error');
+          console.error(err);
         } else {
-          console.log('record updated');
+          callback(result);
         }
       });
     }
