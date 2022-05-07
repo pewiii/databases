@@ -30,8 +30,13 @@ var App = {
         data = JSON.parse(data);
         console.log(data);
       }
+      console.log(data);
       //data = data.results;
       data.forEach((msg) => {
+        if (!msg.username) {
+          msg.username = msg.user.username;
+          msg.roomname = msg.room.roomname;
+        }
         Rooms.add(msg.roomname);
         Messages.addMessage(msg);
       });

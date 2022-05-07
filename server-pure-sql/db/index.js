@@ -1,26 +1,58 @@
 var mysql = require('mysql');
-var sequelize = require('sequelize');
+var Sequelize = require('sequelize');
 // Create a database connection and export it from this file.
 // You will need to connect with the user "root", no password,
 // and to the database "chat".
 
-// var con = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: '',
-//   database: 'chat'
-// });
-
-// con.connect((err) => {
-//   if (err) {
-//     console.error(err);
-//   } else {
-//     console.log('Connected to Database');
-//   }
-// });
-var con = new sequelize('chatter', 'root', '', {
+var db = new Sequelize('chatter', 'root', '', {
   host: 'localhost',
   dialect: 'mysql'
 });
 
-module.exports = con;
+var Messages = db.define('messages', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  text: {
+    type: Sequelize.STRING
+  }
+});
+
+var Users = db.define('users', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  username: {
+    type: Sequelize.STRING
+  }
+});
+
+var Rooms = db.define('rooms', {
+  id: {
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+    primaryKey: true
+  },
+  roomname: {
+    type: Sequelize.STRING
+  }
+});
+
+Users.hasMany(Messages);
+Rooms.hasMany(Messages);
+Messages.belongsTo(Users);
+Messages.belongsTo(Rooms);
+
+db.sync({force: true})
+  .then((err, result) => {
+    console.log('Database Synced');
+  });
+
+module.exports = {Rooms, Messages, Users};

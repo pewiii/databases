@@ -10,8 +10,10 @@
   },
   "scripts": {
     "start": "node ./server/app.js",
+    "start2": "node ./server-pure-sql/app.js",
     "start:es6": "babel-node ./server/app.js",
     "test": "mocha server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
+    "test2": "mocha server-pure-sql/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "test:es6": "mocha --compilers js:babel-register server/spec/server-spec.js; RES=$?; kill %1; exit $RES",
     "lint": "eslint ./"
   },
