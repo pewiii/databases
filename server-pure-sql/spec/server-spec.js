@@ -77,14 +77,14 @@ describe('Persistent Node Chat Server', function() {
       if (err) {
         throw err;
       } else {
-        dbConnection.query('UPDATE rooms SET roomname = "Hello" WHERE id = 1', (err, result) => {
+        dbConnection.query('UPDATE rooms SET roomname = "space" WHERE id = 1', (err, result) => {
           if (err) {
             throw err;
           } else {
             request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
               var messageLog = JSON.parse(body);
               expect(messageLog[0].text).to.equal('Men like you can never change!');
-              expect(messageLog[0].room.roomname).to.equal('Hello');
+              expect(messageLog[0].room.roomname).to.equal('space');
               done();
             });
           }
@@ -94,4 +94,44 @@ describe('Persistent Node Chat Server', function() {
       // the message we just inserted:
     });
   });
+
+  it('Should not insert duplicate users to the DB', function(done) {
+    // Post the same user to the chat server.
+    request({
+      method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/users',
+      json: { username: 'Valjean' }
+    }, function () {
+      var queryString = 'SELECT * FROM users';
+      var queryArgs = [];
+      dbConnection.query(queryString, queryArgs, function(err, results) {
+        if (err) { console.error(err); }
+        // Should have one result:
+        expect(results.length).to.equal(1);
+        expect(results[0].username).to.equal('Valjean');
+        done();
+      });
+    });
+  });
+  it('Should not insert duplicate rooms to the DB', function(done) {
+    // Post the same user to the chat server.
+    request({
+      method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: { username: 'HAL9000',
+        text: 'I\'m sorry Dave, I\'m afraid I can\'t do that.',
+        roomname: 'space'}
+    }, function () {
+      var queryString = 'SELECT * FROM rooms';
+      var queryArgs = [];
+      dbConnection.query(queryString, queryArgs, function(err, results) {
+        if (err) { console.error(err); }
+        // Should have one result:
+        expect(results.length).to.equal(1);
+        expect(results[0].roomname).to.equal('space');
+        done();
+      });
+    });
+  });
 });
+

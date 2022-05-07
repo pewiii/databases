@@ -54,8 +54,9 @@ module.exports = {
     // Ditto as above.
     },
     post: function (usrs, callback) {
-      db.Users.create({
-        username: usrs.username
+      db.Users.findOrCreate({
+        where: {username: usrs.username},
+        defaults: {username: usrs.username}
       }).then(data => {
         callback(usrs);
       });
