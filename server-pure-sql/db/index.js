@@ -29,6 +29,9 @@ var Users = db.define('users', {
     primaryKey: true
   },
   username: {
+    type: Sequelize.STRING,
+  },
+  password: {
     type: Sequelize.STRING
   }
 });
